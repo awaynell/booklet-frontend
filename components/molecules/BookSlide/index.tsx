@@ -1,21 +1,19 @@
+import { SLIDE_HEIGHT } from "@/constants/heights";
 import { IBook } from "@/types/books";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
-  Dimensions,
   Image,
   Pressable,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
-
 export const BookSlideItem: React.FC<{ item: IBook }> = ({ item }) => {
   const [loading, setLoading] = useState(true);
+  const [isLiked, setIsLiked] = useState(false);
   const [showAnnotation, setShowAnnotation] = useState(false);
   const anim = useRef(new Animated.Value(0)).current;
 
@@ -33,12 +31,10 @@ export const BookSlideItem: React.FC<{ item: IBook }> = ({ item }) => {
     outputRange: [1, 0],
   });
 
+  const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
   return (
-    <Pressable
-      onPress={toggleAnnotation}
-      className="flex-1"
-      style={{ height: SCREEN_HEIGHT }}
-    >
+    <Pressable onPress={toggleAnnotation} style={{ height: SLIDE_HEIGHT }}>
       {/* Обложка */}
       <Image
         source={{
@@ -74,19 +70,35 @@ export const BookSlideItem: React.FC<{ item: IBook }> = ({ item }) => {
           </Text>
           <Text className="text-zinc-300 text-xl">{item.author}</Text>
         </View>
-        <TouchableOpacity className="absolute right-4 bottom-64 items-center">
-          <AntDesign name="hearto" size={24} color="white" />
-          <Text className="text-white mt-1 font-medium">1408</Text>
-        </TouchableOpacity>
       </Animated.View>
 
       {/* Блок с описанием */}
       <Animated.View
         style={{ opacity: anim }}
-        className="absolute inset-0 bg-black/70 p-6"
+        className="absolute inset-0 bg-black/70 py-20 px-6"
       >
-        <Text className="text-white text-lg leading-7">{"Аннотация"}</Text>
+        <Text className="text-white text-[24px] leading-7">{"Авторы:"}</Text>
+        {item.author_name.map((author) => (
+          <Text key={author} className="text-zinc-300 text-[20px]">
+            {author}
+          </Text>
+        ))}
       </Animated.View>
+      <AnimatedPressable
+        style={{ opacity: metaOpacity }}
+        className="absolute right-4 bottom-64 items-center"
+        onPress={() => {
+          setIsLiked((prev) => !prev);
+        }}
+        hitSlop={20}
+      >
+        <AntDesign
+          name={isLiked ? "heart" : "hearto"}
+          size={24}
+          color="white"
+        />
+        <Text className="text-white mt-1 font-medium">1408</Text>
+      </AnimatedPressable>
     </Pressable>
   );
 };

@@ -1,10 +1,11 @@
 import { useBooks } from "@/api/books/hooks";
 import { BookSlideItem } from "@/components/molecules/BookSlide";
+import { SLIDE_HEIGHT } from "@/constants/heights";
 import { IBook } from "@/types/books";
 import React, { useMemo, useRef } from "react";
+import { useScrollToTop } from "@react-navigation/native";
 import {
   ActivityIndicator,
-  Dimensions,
   FlatList,
   Image,
   RefreshControl,
@@ -12,11 +13,11 @@ import {
   ViewToken,
 } from "react-native";
 
-const { height: SCREEN_HEIGHT } = Dimensions.get("screen");
-
 export const BookSlider = () => {
   const flatListRef = useRef<FlatList>(null);
   const onEndReachedCalled = useRef(false);
+
+  useScrollToTop(flatListRef);
 
   const {
     data,
@@ -65,7 +66,7 @@ export const BookSlider = () => {
     return (
       <View
         className="flex-1 justify-center items-center"
-        style={{ height: SCREEN_HEIGHT }}
+        style={{ height: SLIDE_HEIGHT }}
       >
         <ActivityIndicator size="large" />
       </View>
@@ -88,8 +89,8 @@ export const BookSlider = () => {
   };
 
   const getItemLayout = (_: any, index: number) => ({
-    length: SCREEN_HEIGHT,
-    offset: SCREEN_HEIGHT * index,
+    length: SLIDE_HEIGHT,
+    offset: SLIDE_HEIGHT * index,
     index,
   });
 
@@ -110,11 +111,11 @@ export const BookSlider = () => {
   // то плавно скроллим до последнего нормального индекса
   const handleMomentumScrollEnd = (e: any) => {
     const offsetY = e.nativeEvent.contentOffset.y;
-    const idx = Math.round(offsetY / SCREEN_HEIGHT);
+    const idx = Math.round(offsetY / SLIDE_HEIGHT);
     const lastIdx = books.length - 1;
     if (idx > lastIdx) {
       flatListRef.current?.scrollToOffset({
-        offset: lastIdx * SCREEN_HEIGHT,
+        offset: lastIdx * SLIDE_HEIGHT,
         animated: true,
       });
     }
@@ -130,7 +131,7 @@ export const BookSlider = () => {
       initialScrollIndex={0}
       getItemLayout={getItemLayout}
       // снэп по экрану
-      snapToInterval={SCREEN_HEIGHT}
+      snapToInterval={SLIDE_HEIGHT}
       snapToAlignment="start"
       disableIntervalMomentum
       decelerationRate="fast"
