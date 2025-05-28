@@ -1,21 +1,28 @@
 import { useBooks } from "@/api/books/hooks";
-import { BookSlideItem } from "@/components/molecules/BookSlide";
+import { SwipeableBookCard } from "@/components/molecules/BookSlide/SwipableCard";
 import { SLIDE_HEIGHT } from "@/constants/heights";
 import { IBook } from "@/types/books";
-import React, { useMemo, useRef } from "react";
 import { useScrollToTop } from "@react-navigation/native";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
   RefreshControl,
+  Text,
   View,
   ViewToken,
 } from "react-native";
+import { Toast } from "toastify-react-native";
 
 export const BookSlider = () => {
   const flatListRef = useRef<FlatList>(null);
   const onEndReachedCalled = useRef(false);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const scrollTo = (idx: number) =>
+    flatListRef.current?.scrollToIndex({ index: idx, animated: true });
 
   useScrollToTop(flatListRef);
 
@@ -31,36 +38,35 @@ export const BookSlider = () => {
 
   // Собираем все страницы в один массив
   const books = useMemo(
-    () => data?.pages.flatMap((p) => p.books).filter((b) => b.cover_i) ?? [],
+    () => data?.pages?.flatMap((p) => p?.books).filter((b) => b?.cover_i) ?? [],
     [data]
   );
-  console.log("books", books);
 
-  // Предзагрузка первых трёх обложек
-  useMemo(() => {
-    books
-      .slice(0, 3)
-      .forEach((b) =>
-        Image.prefetch(`https://covers.openlibrary.org/b/id/${b.cover_i}-L.jpg`)
-      );
+  const booksRef = useRef(books);
+
+  useEffect(() => {
+    booksRef.current = books;
   }, [books]);
 
-  // Предзагрузка следующих обложек при показе новых
-  const onViewableItemsChanged = React.useCallback(
+  const onViewableItemsChanged = useRef(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
       if (!viewableItems.length) return;
+
+      setCurrentIndex(viewableItems[0].index ?? 0);
+
       const idx = viewableItems[0].index ?? 0;
+      const allBooks = booksRef.current;
+
       for (let i = 1; i <= 3; i++) {
-        const next = books[idx + i];
-        if (next) {
+        const next = allBooks[idx + i];
+        if (next?.cover_i) {
           Image.prefetch(
             `https://covers.openlibrary.org/b/id/${next.cover_i}-L.jpg`
           );
         }
       }
-    },
-    [books]
-  );
+    }
+  ).current;
 
   if (isLoading) {
     return (
@@ -73,8 +79,25 @@ export const BookSlider = () => {
     );
   }
 
+  const handleLike = () => {
+    Toast.success("Лайк", "top");
+    scrollTo(currentIndex + 1);
+  };
+
+  const handleNope = () => {
+    Toast.error("Неподходящая книга", "top");
+    scrollTo(currentIndex + 1);
+  };
+
   const renderItem = ({ item }: { item: IBook }) => {
-    return <BookSlideItem item={item} />;
+    return (
+      <SwipeableBookCard
+        key={item.key}
+        item={item}
+        onLike={handleLike}
+        onNope={handleNope}
+      />
+    );
   };
 
   const renderListFooterComponent = () => {
@@ -86,6 +109,19 @@ export const BookSlider = () => {
       );
     }
     return null;
+  };
+
+  const renderListEmptyComponent = () => {
+    return (
+      <View
+        style={{ height: SLIDE_HEIGHT }}
+        className="flex-1 justify-center items-center px-4"
+      >
+        <Text className="text-zinc-300 text-center text-[24px]">
+          Нет книг для отображения. Попробуйте потянуть для обновления
+        </Text>
+      </View>
+    );
   };
 
   const getItemLayout = (_: any, index: number) => ({
@@ -125,7 +161,6 @@ export const BookSlider = () => {
     <FlatList
       ref={flatListRef}
       data={books}
-      renderItem={renderItem}
       keyExtractor={(item, idx) => `${item.cover_i}-${idx}`}
       // вот это гарантирует: стартуем всегда с нулевой страницы
       initialScrollIndex={0}
@@ -148,7 +183,9 @@ export const BookSlider = () => {
       }
       viewabilityConfig={{ viewAreaCoveragePercentThreshold: 50 }}
       onViewableItemsChanged={onViewableItemsChanged}
+      renderItem={renderItem}
       ListFooterComponent={renderListFooterComponent}
+      ListEmptyComponent={renderListEmptyComponent}
     />
   );
 };

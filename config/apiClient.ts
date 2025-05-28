@@ -9,4 +9,14 @@ export const openLibraryApiClient = axios.create({
   },
 });
 
+openLibraryApiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.data) {
+      return Promise.reject(error.response.data);
+    }
+    return Promise.reject({ success: false, message: "Unknown error" });
+  }
+);
+
 export const queryClient = new QueryClient();

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Booklet",
+    "name": "Буклет",
     "slug": "booklet",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "booklet",
@@ -13,8 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#c34dff"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.booklet"
@@ -29,10 +29,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "image": "./assets/images/splash_icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#56276e"
         }
       ]
     ],

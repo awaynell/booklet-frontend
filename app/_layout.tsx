@@ -5,6 +5,8 @@ import { DarkTheme, ThemeProvider } from "@react-navigation/native";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Stack } from "expo-router";
 import { StatusBar } from "react-native";
+import ToastManager from "toastify-react-native";
+
 import "./global.css";
 
 if (__DEV__) {
@@ -17,6 +19,7 @@ export default function RootLayout() {
       <GestureHandlerRootView className="flex-1">
         <QueryClientProvider client={queryClient}>
           <StatusBar backgroundColor={"black"} />
+          <ToastManager theme={"dark"} useModal={false} />
           <Stack>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           </Stack>

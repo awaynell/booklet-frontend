@@ -25,13 +25,14 @@ export const useBooks = () => {
       );
 
       return {
-        books: response.data.docs
-          .filter((book) => book.cover_i)
-          .map((book) => ({
-            ...book,
-            likes: 0,
-            isLiked: false,
-          })),
+        books:
+          response?.data?.docs
+            ?.filter((book) => book.cover_i)
+            ?.map((book) => ({
+              ...book,
+              likes: 0,
+              isLiked: false,
+            })) || [],
         nextPage: Number(pageParam) + 1,
       };
     },

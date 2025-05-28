@@ -3,4 +3,5 @@ export interface IBook {
   author: string;
   cover_i: number;
   author_name: string[];
+  key: string;
 }

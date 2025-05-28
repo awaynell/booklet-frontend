@@ -5,7 +5,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Index() {
   return (
     <SafeAreaView className="flex-1">
-      <View className="flex-1 bg-orange-100">
+      <View className="flex-1">
         <BookSlider />
       </View>
     </SafeAreaView>

@@ -1,12 +1,15 @@
 import { SLIDE_HEIGHT } from "@/constants/heights";
 import { IBook } from "@/types/books";
 import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+
 import { useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
   Image,
   Pressable,
+  Share,
   Text,
   View,
 } from "react-native";
@@ -32,6 +35,13 @@ export const BookSlideItem: React.FC<{ item: IBook }> = ({ item }) => {
   });
 
   const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
+  const share = () => {
+    Share.share({
+      title: item.title,
+      message: `Зацени книжку! \n\n${item.title} \n\nhttps://openlibrary.org/${item.key}`,
+    });
+  };
 
   return (
     <Pressable onPress={toggleAnnotation} style={{ height: SLIDE_HEIGHT }}>
@@ -78,27 +88,38 @@ export const BookSlideItem: React.FC<{ item: IBook }> = ({ item }) => {
         className="absolute inset-0 bg-black/70 py-20 px-6"
       >
         <Text className="text-white text-[24px] leading-7">{"Авторы:"}</Text>
-        {item.author_name.map((author) => (
-          <Text key={author} className="text-zinc-300 text-[20px]">
-            {author}
-          </Text>
-        ))}
+        {item?.author_name?.length !== 0 ? (
+          item?.author_name?.map((author) => (
+            <Text key={author} className="text-zinc-300 text-[20px]">
+              {author}
+            </Text>
+          ))
+        ) : (
+          <Text className="text-zinc-300 text-[20px]">Неизвестный автор</Text>
+        )}
       </Animated.View>
-      <AnimatedPressable
+      <Animated.View
         style={{ opacity: metaOpacity }}
         className="absolute right-4 bottom-64 items-center"
-        onPress={() => {
-          setIsLiked((prev) => !prev);
-        }}
-        hitSlop={20}
       >
-        <AntDesign
-          name={isLiked ? "heart" : "hearto"}
-          size={24}
-          color="white"
-        />
-        <Text className="text-white mt-1 font-medium">1408</Text>
-      </AnimatedPressable>
+        <AnimatedPressable
+          className={"items-center"}
+          onPress={() => {
+            setIsLiked((prev) => !prev);
+          }}
+          hitSlop={20}
+        >
+          <AntDesign
+            name={isLiked ? "heart" : "hearto"}
+            size={24}
+            color="white"
+          />
+          <Text className="text-white mt-1 font-medium">1408</Text>
+        </AnimatedPressable>
+        <AnimatedPressable onPress={share} className={"mt-4"}>
+          <Feather name="share" size={24} color="white" />
+        </AnimatedPressable>
+      </Animated.View>
     </Pressable>
   );
 };
