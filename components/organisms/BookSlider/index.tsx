@@ -74,7 +74,10 @@ export const BookSlider = () => {
         className="flex-1 justify-center items-center"
         style={{ height: SLIDE_HEIGHT }}
       >
-        <ActivityIndicator size="large" />
+        <Image
+          source={require("@/assets/images/loader.png")}
+          className="h-[175px] w-[175px]"
+        />
       </View>
     );
   }

@@ -13,8 +13,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
-        "backgroundColor": "#c34dff"
+        "foregroundImage": "./assets/images/booklet_icon1.png",
+        "backgroundColor": "#F6BE62"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.booklet"
@@ -29,9 +29,9 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash_icon.png",
+          "image": "./assets/images/booklet_splash.png",
           "resizeMode": "contain",
-          "backgroundColor": "#56276e"
+          "backgroundColor": "#F6BE62"
         }
       ]
     ],

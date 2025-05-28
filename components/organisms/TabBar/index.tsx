@@ -8,7 +8,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const TabBar = ({ descriptors, state, navigation }: BottomTabBarProps) => {
   return (
     <SafeAreaView edges={["bottom"]} className="relative">
-      <View className="bg-slate-900">
+      <View className="bg-[#e3ae5a]">
         <View className="w-full flex-row items-end justify-between py-3">
           {state.routes.map((item, index) => {
             const isSelected = state.index === index;
